@@ -66,5 +66,5 @@ const backBtn        = document.getElementById('back-btn');
    Back button — return to homepage
    ============================================================= */
 backBtn.addEventListener('click', () => {
-  window.location.href = 'index.html';
+  window.location.href = 'home.html';
 });

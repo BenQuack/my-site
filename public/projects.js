@@ -67,6 +67,6 @@ backBtn.addEventListener('click', () => {
 
   /* Navigate once the zoom has peaked — same delay as the outbound trip */
   setTimeout(() => {
-    window.location.href = 'index.html';
+    window.location.href = 'home.html';
   }, 1600);
 });
