@@ -1,0 +1,602 @@
+/* =============================================================
+   style.css
+   Shared styles for all portfolio pages
+   Sections:
+     1.  Reset & Base
+     2.  Page entrance animation
+     3.  Scene wrapper  (index.html)
+     4.  Sky            (index.html)
+     5.  Ocean          (index.html)
+     6.  Underwater scene page  (about.html)
+     7.  Space scene page       (projects.html)
+     8.  UI — back button       (all pages)
+     9.  UI — project circles   (projects.html)
+     10. UI — underwater content (about.html)
+   ============================================================= */
+
+
+/* -------------------------------------------------------------
+   1. Reset & Base
+   ------------------------------------------------------------- */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Cormorant Garamond', serif;
+  background: #000;
+}
+
+
+/* -------------------------------------------------------------
+   2. Page entrance animation
+   Applied via class="page-enter" on <body> of secondary pages.
+   Fades in from black so the arrival feels like emerging from
+   the zoom rather than a hard page load.
+   ------------------------------------------------------------- */
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.page-enter {
+  animation: page-fade-in 0.9s ease both;
+}
+
+
+/* -------------------------------------------------------------
+   3. Scene wrapper  (index.html)
+   The entire viewport is one scene div that gets scaled/
+   translated during navigation transitions.
+   ------------------------------------------------------------- */
+#scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  will-change: transform;
+  transition:
+    transform 2.4s cubic-bezier(0.76, 0, 0.24, 1),
+    filter   2.4s ease;
+}
+
+
+/* -------------------------------------------------------------
+   4. Sky  (index.html — top 52% of screen)
+   Clickable zone — navigates to Projects / Space.
+   On hover: brightness lifts and shooting stars appear on canvas.
+   ------------------------------------------------------------- */
+#sky {
+  position: absolute;
+  inset: 0 0 48% 0;          /* occupies top 52% */
+  background: linear-gradient(
+    180deg,
+    #050212 0%,
+    #0d062b 18%,
+    #2a0d4f 38%,
+    #7b2d5e 62%,
+    #d4613a 80%,
+    #f4a44a 92%,
+    #ffe580 100%
+  );
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;         /* prevents blending leaking to siblings */
+  transition: filter 0.5s ease;
+}
+
+#sky:hover {
+  filter: brightness(1.12);
+}
+
+/* Canvas used for shooting-star particles (no DOM artifacts) */
+#sky-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Static star field baked into a single background-image */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12%  8%,  rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 28% 14%,  rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 5%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 11%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72%  3%,  rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 83% 18%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 91% 7%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at  5% 22%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 28%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 20%,  rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 25%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 18% 35%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 32%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 42% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 67% 38%,  rgba(255,255,255,0.3) 0%, transparent 100%);
+}
+
+/* Sun disc sitting at the horizon */
+.sun {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff9d0 0%, #ffe580 30%, #f4a44a 65%, transparent 100%);
+  box-shadow:
+    0 0  40px 20px  rgba(244,164,74, 0.6),
+    0 0 100px 60px  rgba(244,100,50, 0.3),
+    0 0 200px 120px rgba(180, 60,30, 0.15);
+  pointer-events: none;
+}
+
+/* Soft vertical beam of sunlight */
+.sun-beam {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 70%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255,200,80, 0.0)  20%,
+    rgba(255,200,80, 0.15) 60%,
+    rgba(255,200,80, 0.3)  100%
+  );
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+
+/* -------------------------------------------------------------
+   5. Ocean  (index.html — bottom 48% of screen)
+   Clickable zone — navigates to About / Underwater.
+   On hover: waves intensify and two extra ripple layers appear.
+   ------------------------------------------------------------- */
+#ocean {
+  position: absolute;
+  inset: 52% 0 0 0;           /* occupies bottom 48% */
+  background: linear-gradient(
+    180deg,
+    #5a8fc7 0%,
+    #2a5a9f 8%,
+    #1a3a6b 25%,
+    #0d2040 55%,
+    #060d1e 100%
+  );
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+  transition: filter 0.5s ease;
+}
+
+#ocean:hover {
+  filter: brightness(1.1) saturate(1.2);
+}
+
+/* Warm orange glow where sky meets ocean */
+.horizon-glow {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 36px;
+  background: linear-gradient(180deg, rgba(212,97,58,0.6) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Sunlight shimmer reflected on the water surface */
+.shimmer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 45%;
+  background: linear-gradient(
+    180deg,
+    rgba(255,220,100, 0.4)  0%,
+    rgba(255,180, 60, 0.12) 60%,
+    transparent 100%
+  );
+  filter: blur(16px);
+  pointer-events: none;
+  will-change: transform;
+  animation: shimmer-sway 4s ease-in-out infinite;
+}
+
+@keyframes shimmer-sway {
+  0%, 100% { transform: translateX(-50%) scaleX(1); }
+  50%       { transform: translateX(-50%) scaleX(1.25); }
+}
+
+/* Base wave layers — always visible */
+.wave {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  border-radius: 50%;           /* simple circle keeps edges clean */
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;  /* prevents flicker on GPU layers */
+  animation: drift linear infinite;
+}
+
+.wave-1 { top: -14%; height: 28%; background: rgba(100,180,255,0.2); opacity: 0.9; animation-duration:  9s; }
+.wave-2 { top:  -8%; height: 22%; background: rgba( 80,160,240,0.18); opacity: 0.8; animation-duration: 13s; animation-direction: reverse; }
+.wave-3 { top:  -2%; height: 18%; background: rgba( 60,140,220,0.15); opacity: 0.7; animation-duration:  7s; }
+
+/* Hover-only extra ripple waves — hidden until ocean is hovered */
+.wave-hover {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.wave-hover-1 { top: 3%; height: 15%; background: rgba(150,210,255,0.2);  animation-duration: 5s; animation-delay: -1s; }
+.wave-hover-2 { top: 8%; height: 12%; background: rgba(120,190,240,0.15); animation-duration: 4s; animation-delay: -2.5s; animation-direction: reverse; }
+
+/* On hover: reveal extra waves and speed up base waves */
+#ocean:hover .wave-hover   { opacity: 1; }
+#ocean:hover .wave-1       { animation-duration: 4s; }
+#ocean:hover .wave-2       { animation-duration: 6s; }
+#ocean:hover .wave-3       { animation-duration: 3.5s; }
+
+@keyframes drift {
+  0%   { transform: translateX(0)  scaleY(1); }
+  50%  { transform: translateX(8%) scaleY(1.1); }
+  100% { transform: translateX(0)  scaleY(1); }
+}
+
+
+/* -------------------------------------------------------------
+   Shared zone hint label
+   Fades in on hover to show the navigation destination.
+   Positioned inside #sky and #ocean respectively.
+   ------------------------------------------------------------- */
+.zone-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cinzel', serif;
+  font-weight: 300;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0);            /* invisible by default */
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 2;
+  transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+
+#sky   .zone-hint { top: 38%; }
+#ocean .zone-hint { top: 40%; }
+
+#sky:hover   .zone-hint { color: rgba(255,255,255,0.55); text-shadow: 0 0 20px rgba(255,200,120,0.4); }
+#ocean:hover .zone-hint { color: rgba(255,255,255,0.55); text-shadow: 0 0 20px rgba(100,200,255,0.4); }
+
+
+/* -------------------------------------------------------------
+   6. Underwater scene  (about.html)
+   Full-viewport background rendered as a fixed layer.
+   Bubbles and seaweed are appended by about.js at runtime.
+   ------------------------------------------------------------- */
+#underwater-page {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #003d6e 0%,
+    #002a50 20%,
+    #001530 55%,
+    #00060f 100%
+  );
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Repeating diagonal grid that mimics caustic light patterns */
+.caustic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background:
+    repeating-linear-gradient( 45deg, transparent 0px, transparent 12px, rgba(80,180,255,0.04) 12px, rgba(80,180,255,0.04) 14px),
+    repeating-linear-gradient(-45deg, transparent 0px, transparent 12px, rgba(60,160,240,0.04) 12px, rgba(60,160,240,0.04) 14px);
+  animation: caustic-shift 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes caustic-shift {
+  0%, 100% { transform: scale(1) translateX(0); }
+  50%       { transform: scale(1.05) translateX(10px); }
+}
+
+/* Blurred shafts of light filtering down from the surface */
+.light-shaft {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  background: linear-gradient(180deg, rgba(100,200,255,0.1) 0%, transparent 70%);
+  transform-origin: top center;
+  filter: blur(8px);
+  pointer-events: none;
+  will-change: transform;
+  animation: shaft-sway 8s ease-in-out infinite;
+}
+
+.light-shaft:nth-child(2) { left: 25%; height: 65%; animation-delay:  0s; }
+.light-shaft:nth-child(3) { left: 45%; height: 80%; animation-delay: -3s; width: 80px; }
+.light-shaft:nth-child(4) { left: 65%; height: 55%; animation-delay: -5s; }
+
+@keyframes shaft-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%       { transform: rotate( 4deg); }
+}
+
+/* Rising air bubbles spawned dynamically in JS */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(150,210,255,0.35);
+  background: rgba(100,190,255,0.06);
+  pointer-events: none;
+  will-change: transform;
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  0%   { transform: translateY(0)      translateX(  0); opacity: 0.6; }
+  50%  { transform: translateY(-40vh) translateX( 10px); opacity: 0.4; }
+  100% { transform: translateY(-85vh) translateX( -5px); opacity: 0;   }
+}
+
+/* Seaweed strands rooted to the ocean floor, spawned dynamically in JS */
+.seaweed {
+  position: absolute;
+  bottom: 0;
+  width: 18px;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, #0a5c2a, #052e14);
+  transform-origin: bottom center;
+  pointer-events: none;
+  will-change: transform;
+  animation: shaft-sway 5s ease-in-out infinite;
+}
+
+
+/* -------------------------------------------------------------
+   7. Space scene  (projects.html)
+   Full-viewport background rendered as a fixed layer.
+   Star divs are appended to #space-stars by projects.js at runtime.
+   ------------------------------------------------------------- */
+#space-page {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 40%, #0a0520 0%, #020108 60%, #000 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Container for dynamically created star divs */
+.space-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Individual twinkling star — size/duration set via inline style in JS */
+.space-star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.9; transform: scale(1);   }
+  50%       { opacity: 0.3; transform: scale(0.7); }
+}
+
+/* Soft glow clouds for nebula colour */
+.nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.nebula-1 { width: 500px; height: 300px; top: 10%; left:  -8%; background: radial-gradient(ellipse, rgba( 80, 20,120,0.5) 0%, transparent 70%); }
+.nebula-2 { width: 400px; height: 400px; top: 30%; right: -5%; background: radial-gradient(ellipse, rgba( 20, 60,120,0.4) 0%, transparent 70%); }
+.nebula-3 { width: 350px; height: 200px; bottom: 20%; left: 20%; background: radial-gradient(ellipse, rgba(120, 40, 60,0.35) 0%, transparent 70%); }
+
+/* Glow suggesting Earth just out of frame below */
+.earth-glow {
+  position: absolute;
+  bottom: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(30,80,180,0.6) 0%, rgba(20,60,120,0.3) 50%, transparent 80%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+
+/* -------------------------------------------------------------
+   8. UI — Back button  (about.html + projects.html)
+   Always visible on secondary pages (.visible applied in HTML).
+   Hidden by default so it can also be used programmatically.
+   ------------------------------------------------------------- */
+#back-btn {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 10px 28px;
+  border-radius: 40px;
+  background: rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#back-btn.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#back-btn:hover {
+  color: rgba(255,255,255,0.9);
+  border-color: rgba(255,255,255,0.4);
+}
+
+
+
+/* -------------------------------------------------------------
+   9. UI — Project circles  (projects.html)
+   Hidden by default; .visible makes them shown.
+   On projects.html the class is set directly in the HTML.
+   ------------------------------------------------------------- */
+#project-circles {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#project-circles.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.project-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  position: relative;
+  /* Solid-ish gradient avoids backdrop-filter compositor artefacts */
+  background: radial-gradient(
+    circle at 38% 35%,
+    rgba(180,120,255,0.55) 0%,
+    rgba( 60, 20,130,0.85) 60%,
+    rgba( 15,  3, 40,0.95) 100%
+  );
+  border: 1px solid rgba(180,140,255,0.3);
+  box-shadow: 0 0 40px rgba(120,60,220,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.project-circle:hover {
+  transform: scale(1.1) translateY(-4px);
+}
+
+/* Slow-spinning decorative orbit ring */
+.project-circle .ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(180,140,255,0.2);
+  pointer-events: none;
+  animation: spin-ring 14s linear infinite;
+}
+
+@keyframes spin-ring {
+  to { transform: rotate(360deg); }
+}
+
+.project-label {
+  font-family: 'Cinzel', serif;
+  font-weight: 300;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 0 16px rgba(180,140,255,0.6);
+  text-align: center;
+  padding: 0 12px;
+}
+
+
+/* -------------------------------------------------------------
+   10. UI — Underwater content  (about.html)
+   Hidden by default; .visible makes it shown.
+   On about.html the class is set directly in the HTML.
+   ------------------------------------------------------------- */
+#underwater-content {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  /* fade in after underwater scene has settled */
+  transition: opacity 0.8s ease 2.4s;
+}
+
+#underwater-content.visible {
+  opacity: 1;
+}
+
+.about-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: 0.4em;
+  color: rgba(160,220,255,0.9);
+  text-shadow: 0 0 30px rgba(80,180,255,0.5);
+  text-transform: uppercase;
+}
+
+.about-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: rgba(180,230,255,0.6);
+  letter-spacing: 0.08em;
+  text-align: center;
+  max-width: 380px;
+  line-height: 1.8;
+}

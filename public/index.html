@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+
+  <!-- Google Fonts: classical serif display + body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       SCENE
+       Full-viewport container. Scaled + filtered during the
+       navigation zoom animation before the page transition fires.
+       ============================================================ -->
+  <div id="scene">
+
+    <!-- SKY  ─────────────────────────────────────────────────────
+         Clickable zone. Navigates to projects.html.
+         On hover: shooting stars appear (drawn on #sky-canvas).   -->
+    <div id="sky">
+      <div class="stars"></div>
+      <canvas id="sky-canvas"></canvas>
+      <div class="sun"></div>
+      <div class="sun-beam"></div>
+      <span class="zone-hint">Projects</span>
+    </div>
+
+    <!-- OCEAN  ───────────────────────────────────────────────────
+         Clickable zone. Navigates to about.html.
+         On hover: wave animations intensify.                       -->
+    <div id="ocean">
+      <div class="horizon-glow"></div>
+      <div class="shimmer"></div>
+
+      <!-- Base waves — always visible -->
+      <div class="wave wave-1"></div>
+      <div class="wave wave-2"></div>
+      <div class="wave wave-3"></div>
+
+      <!-- Extra ripple waves — revealed on hover via CSS -->
+      <div class="wave wave-hover wave-hover-1"></div>
+      <div class="wave wave-hover wave-hover-2"></div>
+
+      <span class="zone-hint">About Me</span>
+    </div>
+
+  </div><!-- /#scene -->
+
+  <script src="./movement.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+    /* Match the space scene background so the shrink-out animation
+       has no visible border — the scene fades into itself rather than black. */
+    html {
+      background: radial-gradient(ellipse at 60% 40%, #0a0520 0%, #020108 60%, #000 100%);
+    }
+  </style>
+</head>
+<body class="page-enter">
+
+  <!-- ============================================================
+       SPACE SCENE
+       Full-viewport background.
+       Star divs are appended to #space-stars by projects.js.
+       ============================================================ -->
+  <div id="space-page">
+    <div class="space-stars" id="space-stars"></div>
+
+    <!-- Soft nebula colour clouds -->
+    <div class="nebula nebula-1"></div>
+    <div class="nebula nebula-2"></div>
+    <div class="nebula nebula-3"></div>
+
+    <!-- Blue glow suggesting Earth just below the frame -->
+    <div class="earth-glow"></div>
+  </div>
+
+  <!-- ============================================================
+       PROJECT CIRCLES
+       Centred overlay floating above the space scene.
+       Add or remove .project-circle blocks to change the count.
+       ============================================================ -->
+  <div id="project-circles" class="visible">
+
+    <div class="project-circle">
+      <div class="ring"></div>
+      <span class="project-label">Project One</span>
+    </div>
+
+    <div class="project-circle">
+      <div class="ring"></div>
+      <span class="project-label">Project Two</span>
+    </div>
+
+  </div>
+
+  <!-- Back button — navigates to index.html via projects.js -->
+  <div id="back-btn" class="visible">&#8595; Return</div>
+
+  <script src="./projects.js"></script>
+</body>
+</html>
